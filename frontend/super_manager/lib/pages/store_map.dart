@@ -14,7 +14,7 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
   final List<Store> _allStores = List.generate(
     100,
     (index) => Store(
-      name: 'なしょなる $index号店',
+      name: 'ナショナル $index号店',
       kanaName: 'なしょなる $indexごうてん',
       location: '大阪市',
       description: 'なしょなるだよ',
@@ -84,38 +84,6 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
                       title: Text(store.name),
                       subtitle: Text(store.location),
                       trailing: Text(store.description),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class StoreMap extends StatelessWidget {
-  const StoreMap({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SizedBox(
-        width: 300,
-        child: Column(
-          children: [
-            Expanded(
-              child: Scrollbar(
-                child: ListView.builder(
-                  primary: true,
-                  itemCount: 100,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text('ナショナル $index号店'),
-                      subtitle: Text('大阪市'),
-                      trailing: Text('なしょなるだよ'),
                     );
                   },
                 ),
