@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:super_manager/model/store.dart';
+import 'package:super_manager/widget/map_form_modal.dart';
 
 class StoreSearchScreen extends StatefulWidget {
   const StoreSearchScreen({super.key});
@@ -51,15 +52,24 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
 
   //google map logic
   bool _isPinMode = false;
+  bool _isTogglingMode = false;
   Set<Marker> _markers = {};
 
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(45.521563, -122.677433);
+  final LatLng _center = const LatLng(34.5781, 135.4764);
 
   void _addMarker(LatLng latLng) {
     final marker = Marker(
       markerId: MarkerId(latLng.toString()),
       position: latLng,
+      infoWindow: InfoWindow(title: "test"),
+    );
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.lightGreen[200],
+      builder: (BuildContext context) {
+        return Container(padding: EdgeInsets.all(16), child: MapFormModal());
+      },
     );
     setState(() {
       _markers = {..._markers, marker};
@@ -126,18 +136,18 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
               GoogleMap(
                 markers: _markers,
                 style: '''[
-                        {
-                        "featureType": "poi",
-                        "stylers": [{"visibility": "off"}]
-                        }
-                        ]''',
+                            {
+                            "featureType": "poi",
+                            "stylers": [{"visibility": "off"}]
+                            }
+                            ]''',
                 onMapCreated: _onMapCreated,
                 initialCameraPosition: CameraPosition(
                   target: _center,
                   zoom: 11.0,
                 ),
                 onTap: (LatLng latLng) {
-                  if (_isPinMode) {
+                  if (_isPinMode && !_isTogglingMode) {
                     _addMarker(latLng);
                   }
                 },
@@ -147,10 +157,13 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
                 child: Padding(
                   padding: EdgeInsetsGeometry.all(8.0),
                   child: FloatingActionButton(
-                    onPressed: () async {
-                      await Future.delayed(Duration(microseconds: 300));
+                    onPressed: () {
                       setState(() {
+                        _isTogglingMode = true;
                         _isPinMode = !_isPinMode;
+                      });
+                      Future.delayed(Duration(milliseconds: 300), () {
+                        setState(() => _isTogglingMode = false);
                       });
                     },
                     child: Icon(_isPinMode ? Icons.cancel : Icons.add_location),
