@@ -11,17 +11,9 @@ class StoreSearchScreen extends StatefulWidget {
   State<StoreSearchScreen> createState() => _StoreSearchScreenState();
 }
 
-class _StoreSearchScreenState extends State<StoreSearchScreen> {
+final class _StoreSearchScreenState extends State<StoreSearchScreen> {
   // モックストア(検索用)
-  final List<Store> _allStores = List.generate(
-    100,
-    (index) => Store(
-      name: 'ナショナル $index号店',
-      kanaName: 'なしょなる $indexごうてん',
-      location: '大阪市',
-      description: 'なしょなるだよ',
-    ),
-  );
+  final List<Store> _allStores = [];
 
   List<Store> _displayedStores = [];
   final TextEditingController _searchController = TextEditingController();
@@ -58,22 +50,38 @@ class _StoreSearchScreenState extends State<StoreSearchScreen> {
   late GoogleMapController mapController;
   final LatLng _center = const LatLng(34.5781, 135.4764);
 
-  void _addMarker(LatLng latLng) {
+  Future<void> _addMarker(LatLng latLng) async {
+    final screenWidth = MediaQuery.of(context).size.width;
+    setState(() => _isPinMode = false);
+    final store = await showModalBottomSheet<Store>(
+      context: context,
+      backgroundColor: Colors.lightGreen[200],
+      constraints: const BoxConstraints(
+        minWidth: 600,
+        maxWidth: 1800,
+        minHeight: 400,
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          width: screenWidth * 0.7,
+          padding: EdgeInsets.all(16),
+          child: MapFormModal(latLng: latLng),
+        );
+      },
+    );
+    if (store == null) {
+      return;
+    }
+
     final marker = Marker(
       markerId: MarkerId(latLng.toString()),
       position: latLng,
-      infoWindow: InfoWindow(title: "test"),
-    );
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.lightGreen[200],
-      builder: (BuildContext context) {
-        return Container(padding: EdgeInsets.all(16), child: MapFormModal());
-      },
+      infoWindow: InfoWindow(title: store.name, snippet: store.location),
     );
     setState(() {
       _markers = {..._markers, marker};
-      _isPinMode = false;
+      _allStores.add(store);
+      _displayedStores = List.from(_allStores);
     });
   }
 
