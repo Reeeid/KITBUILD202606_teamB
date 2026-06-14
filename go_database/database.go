@@ -12,7 +12,6 @@ import (
 
 func main() {
 	loadEnv()
-	err := godotenv.Load(".env")
 
 	db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -29,7 +28,7 @@ func main() {
 }
 
 func loadEnv() {
-	err := godotenv.Load()
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal(err)
 	}
