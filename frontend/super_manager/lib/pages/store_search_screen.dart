@@ -56,9 +56,9 @@ final class _StoreSearchScreenState extends State<StoreSearchScreen> {
     final store = await showModalBottomSheet<Store>(
       context: context,
       backgroundColor: Colors.lightGreen[200],
-      constraints: const BoxConstraints(
-        minWidth: 200,
-        maxWidth: 1800,
+      constraints: BoxConstraints(
+        minWidth: screenWidth.clamp(0, 300),
+        maxWidth: screenWidth.clamp(0, 800),
         minHeight: 400,
       ),
       builder: (BuildContext context) {
