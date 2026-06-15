@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:super_manager/components/nav_bar.dart';
+<<<<<<< HEAD
 import 'package:super_manager/pages/shopping_screen.dart';
 import 'package:super_manager/pages/store_search_screen.dart';
+=======
+import 'package:super_manager/pages/store_map.dart';
+import 'package:super_manager/pages/category_page.dart';
+>>>>>>> 0a22622 (商品分類欄と商品の詳細欄の作成)
 
 void main() {
   runApp(const MyApp());
@@ -34,8 +39,13 @@ class _RootPageState extends State<RootPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
+<<<<<<< HEAD
     ShoppingScreen(),
     StoreSearchScreen(),
+=======
+    const CategoryPage(),
+    Center(child: StoreSearchScreen()),
+>>>>>>> 0a22622 (商品分類欄と商品の詳細欄の作成)
     Center(child: Text('商品')),
   ];
 
