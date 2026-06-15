@@ -10,7 +10,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func main() {
+func InitDB() {
 	loadEnv()
 
 	db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
