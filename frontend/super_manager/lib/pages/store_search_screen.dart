@@ -97,91 +97,149 @@ final class _StoreSearchScreenState extends State<StoreSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 300,
-          child: Column(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          return Row(
             children: [
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    labelText: '店舗名を入力',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                  onChanged: _searchStores,
-                ), // 文字が入力されるたびに検索を実行
-              ),
-              Expanded(
-                child: Scrollbar(
-                  child: ListView.builder(
-                    primary: true,
-                    itemCount: _displayedStores.length,
-                    itemBuilder: (context, index) {
-                      final store = _displayedStores[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text(store.name),
-                          subtitle: Text(store.location),
-                          trailing: Text(store.description),
+              SizedBox(
+                width: 300,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          labelText: '店舗名を入力',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.search),
                         ),
-                      );
-                    },
-                  ),
+                        onChanged: _searchStores,
+                      ), // 文字が入力されるたびに検索を実行
+                    ),
+                    Expanded(
+                      child: Scrollbar(
+                        child: ListView.builder(
+                          primary: true,
+                          itemCount: _displayedStores.length,
+                          itemBuilder: (context, index) {
+                            final store = _displayedStores[index];
+                            return Card(
+                              child: ListTile(
+                                title: Text(store.name),
+                                subtitle: Text(store.location),
+                                trailing: Text(store.description),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Stack(
-            children: [
-              GoogleMap(
-                markers: _markers,
-                style: '''[
+              Expanded(
+                child: Stack(
+                  children: [
+                    GoogleMap(
+                      markers: _markers,
+                      style: '''[
                             {
                             "featureType": "poi",
                             "stylers": [{"visibility": "off"}]
                             }
                             ]''',
-                onMapCreated: _onMapCreated,
-                initialCameraPosition: CameraPosition(
-                  target: _center,
-                  zoom: 11.0,
-                ),
-                onTap: (LatLng latLng) {
-                  if (_isPinMode && !_isTogglingMode) {
-                    _addMarker(latLng);
-                  }
-                },
-              ),
-              Align(
-                alignment: AlignmentGeometry.bottomCenter,
-                child: Padding(
-                  padding: EdgeInsetsGeometry.all(8.0),
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      setState(() {
-                        _isTogglingMode = true;
-                        _isPinMode = !_isPinMode;
-                      });
-                      Future.delayed(Duration(milliseconds: 300), () {
-                        setState(() => _isTogglingMode = false);
-                      });
-                    },
-                    child: Icon(_isPinMode ? Icons.cancel : Icons.add_location),
-                  ),
+                      onMapCreated: _onMapCreated,
+                      initialCameraPosition: CameraPosition(
+                        target: _center,
+                        zoom: 11.0,
+                      ),
+                      onTap: (LatLng latLng) {
+                        if (_isPinMode && !_isTogglingMode) {
+                          _addMarker(latLng);
+                        }
+                      },
+                    ),
+                    Align(
+                      alignment: AlignmentGeometry.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsetsGeometry.all(8.0),
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            setState(() {
+                              _isTogglingMode = true;
+                              _isPinMode = !_isPinMode;
+                            });
+                            Future.delayed(Duration(milliseconds: 300), () {
+                              setState(() => _isTogglingMode = false);
+                            });
+                          },
+                          child: Icon(
+                            _isPinMode ? Icons.cancel : Icons.add_location,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
-        ),
-      ],
+          );
+        } else {
+          return Stack(
+            children: [
+              Expanded(
+                child: Stack(
+                  children: [
+                    GoogleMap(
+                      markers: _markers,
+                      style: '''[
+                            {
+                            "featureType": "poi",
+                            "stylers": [{"visibility": "off"}]
+                            }
+                            ]''',
+                      onMapCreated: _onMapCreated,
+                      initialCameraPosition: CameraPosition(
+                        target: _center,
+                        zoom: 11.0,
+                      ),
+                      onTap: (LatLng latLng) {
+                        if (_isPinMode && !_isTogglingMode) {
+                          _addMarker(latLng);
+                        }
+                      },
+                    ),
+                    Align(
+                      alignment: AlignmentGeometry.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsetsGeometry.all(8.0),
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            setState(() {
+                              _isTogglingMode = true;
+                              _isPinMode = !_isPinMode;
+                            });
+                            Future.delayed(Duration(milliseconds: 300), () {
+                              setState(() => _isTogglingMode = false);
+                            });
+                          },
+                          child: Icon(
+                            _isPinMode ? Icons.cancel : Icons.add_location,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 }
