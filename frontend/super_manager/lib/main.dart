@@ -3,6 +3,7 @@ import 'package:super_manager/components/nav_bar.dart';
 import 'package:super_manager/components/bottom_nav_bar.dart';
 import 'package:super_manager/pages/shopping_screen.dart';
 import 'package:super_manager/pages/store_search_screen.dart';
+import 'package:super_manager/pages/category_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +38,7 @@ class _RootPageState extends State<RootPage> {
   final List<Widget> _pages = [
     ShoppingScreen(),
     StoreSearchScreen(),
-    Center(child: Text('商品')),
+    CategoryPage(),
   ];
 
   @override
