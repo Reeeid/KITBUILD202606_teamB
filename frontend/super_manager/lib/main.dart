@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:super_manager/components/nav_bar.dart';
+import 'package:super_manager/components/bottom_nav_bar.dart';
 import 'package:super_manager/pages/shopping_screen.dart';
 import 'package:super_manager/pages/store_search_screen.dart';
 import 'package:super_manager/pages/category_page.dart';
@@ -42,17 +43,33 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightGreen[200],
-      body: Row(
-        children: [
-          NavRail(
-            index: _selectedIndex,
-            onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-          ),
-          Expanded(child: _pages[_selectedIndex]),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth > 600) {
+          return Scaffold(
+            backgroundColor: Colors.lightGreen[200],
+            body: Row(
+              children: [
+                NavRail(
+                  index: _selectedIndex,
+                  onDestinationSelected: (i) =>
+                      setState(() => _selectedIndex = i),
+                ),
+                Expanded(child: _pages[_selectedIndex]),
+              ],
+            ),
+          );
+        } else {
+          return Scaffold(
+            backgroundColor: Colors.lightGreen[200],
+            body: _pages[_selectedIndex],
+            bottomNavigationBar: BottomNavBar(
+              index: _selectedIndex,
+              onSelected: (i) => setState(() => _selectedIndex = i),
+            ),
+          );
+        }
+      },
     );
   }
 }

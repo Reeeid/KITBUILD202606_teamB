@@ -12,6 +12,7 @@ class StoreSearchScreen extends StatefulWidget {
 }
 
 final class _StoreSearchScreenState extends State<StoreSearchScreen> {
+  bool _isDrawerOpen = false;
   // モックストア(検索用)
   final List<Store> _allStores = [];
 
@@ -47,18 +48,17 @@ final class _StoreSearchScreenState extends State<StoreSearchScreen> {
   bool _isTogglingMode = false;
   Set<Marker> _markers = {};
 
-  late GoogleMapController mapController;
   final LatLng _center = const LatLng(34.5781, 135.4764);
 
   Future<void> _addMarker(LatLng latLng) async {
     final screenWidth = MediaQuery.of(context).size.width;
-    setState(() => _isPinMode = false);
+    if (mounted) setState(() => _isPinMode = false);
     final store = await showModalBottomSheet<Store>(
       context: context,
       backgroundColor: Colors.lightGreen[200],
-      constraints: const BoxConstraints(
-        minWidth: 600,
-        maxWidth: 1800,
+      constraints: BoxConstraints(
+        minWidth: screenWidth.clamp(0, 300),
+        maxWidth: screenWidth.clamp(0, 800),
         minHeight: 400,
       ),
       builder: (BuildContext context) {
@@ -85,10 +85,6 @@ final class _StoreSearchScreenState extends State<StoreSearchScreen> {
     });
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -97,91 +93,198 @@ final class _StoreSearchScreenState extends State<StoreSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 300,
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    labelText: '店舗名を入力',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                  onChanged: _searchStores,
-                ), // 文字が入力されるたびに検索を実行
-              ),
-              Expanded(
-                child: Scrollbar(
-                  child: ListView.builder(
-                    primary: true,
-                    itemCount: _displayedStores.length,
-                    itemBuilder: (context, index) {
-                      final store = _displayedStores[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text(store.name),
-                          subtitle: Text(store.location),
-                          trailing: Text(store.description),
-                        ),
-                      );
-                    },
+    final width = MediaQuery.of(context).size.width;
+    if (width > 600) {
+      return Row(
+        children: [
+          SizedBox(
+            width: 300,
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      labelText: '店舗名を入力',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                    onChanged: _searchStores,
+                  ), // 文字が入力されるたびに検索を実行
+                ),
+                Expanded(
+                  child: Scrollbar(
+                    child: ListView.builder(
+                      primary: true,
+                      itemCount: _displayedStores.length,
+                      itemBuilder: (context, index) {
+                        final store = _displayedStores[index];
+                        return Card(
+                          child: ListTile(
+                            title: Text(store.name),
+                            subtitle: Text(store.location),
+                            trailing: Text(store.description),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: Stack(
-            children: [
-              GoogleMap(
-                markers: _markers,
-                style: '''[
+          Expanded(
+            child: Stack(
+              children: [
+                GoogleMap(
+                  markers: _markers,
+                  style: '''[
                             {
                             "featureType": "poi",
                             "stylers": [{"visibility": "off"}]
                             }
                             ]''',
-                onMapCreated: _onMapCreated,
-                initialCameraPosition: CameraPosition(
-                  target: _center,
-                  zoom: 11.0,
+                  initialCameraPosition: CameraPosition(
+                    target: _center,
+                    zoom: 11.0,
+                  ),
+                  onTap: (LatLng latLng) {
+                    if (_isPinMode && !_isTogglingMode) {
+                      _addMarker(latLng);
+                    }
+                  },
                 ),
-                onTap: (LatLng latLng) {
-                  if (_isPinMode && !_isTogglingMode) {
-                    _addMarker(latLng);
-                  }
-                },
-              ),
-              Align(
-                alignment: AlignmentGeometry.bottomCenter,
-                child: Padding(
-                  padding: EdgeInsetsGeometry.all(8.0),
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      setState(() {
-                        _isTogglingMode = true;
-                        _isPinMode = !_isPinMode;
-                      });
-                      Future.delayed(Duration(milliseconds: 300), () {
-                        setState(() => _isTogglingMode = false);
-                      });
-                    },
-                    child: Icon(_isPinMode ? Icons.cancel : Icons.add_location),
+                Align(
+                  alignment: AlignmentGeometry.bottomCenter,
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.all(8.0),
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        setState(() {
+                          _isTogglingMode = true;
+                          _isPinMode = !_isPinMode;
+                        });
+                        Future.delayed(Duration(milliseconds: 300), () {
+                          if (mounted) setState(() => _isTogglingMode = false);
+                        });
+                      },
+                      child: Icon(
+                        _isPinMode ? Icons.cancel : Icons.add_location,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    } else {
+      return Stack(
+        children: [
+          GoogleMap(
+            markers: _markers,
+            style: '''[
+                            {
+                            "featureType": "poi",
+                            "stylers": [{"visibility": "off"}]
+                            }
+                            ]''',
+            initialCameraPosition: CameraPosition(target: _center, zoom: 11.0),
+            onTap: (LatLng latLng) {
+              if (_isPinMode && !_isTogglingMode) {
+                _addMarker(latLng);
+              }
+            },
+          ),
+          Align(
+            alignment: AlignmentGeometry.bottomCenter,
+            child: Padding(
+              padding: EdgeInsetsGeometry.all(8.0),
+              child: FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    _isTogglingMode = true;
+                    _isPinMode = !_isPinMode;
+                  });
+                  Future.delayed(Duration(milliseconds: 300), () {
+                    if (mounted) setState(() => _isTogglingMode = false);
+                  });
+                },
+                child: Icon(_isPinMode ? Icons.cancel : Icons.add_location),
+              ),
+            ),
+          ),
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            right: _isDrawerOpen ? 0 : -300,
+            top: 0,
+            bottom: 0,
+            width: 300,
+            child: Container(
+              color: Colors.white,
+              child: Listener(
+                onPointerDown: (_) {},
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          labelText: '店舗名を入力',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                        onChanged: _searchStores,
+                      ), // 文字が入力されるたびに検索を実行
+                    ),
+                    Expanded(
+                      child: Scrollbar(
+                        child: ListView.builder(
+                          primary: true,
+                          itemCount: _displayedStores.length,
+                          itemBuilder: (context, index) {
+                            final store = _displayedStores[index];
+                            return Card(
+                              child: ListTile(
+                                title: Text(store.name),
+                                subtitle: Text(store.location),
+                                trailing: Text(store.description),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: AlignmentGeometry.topRight,
+            child: Padding(
+              padding: EdgeInsetsGeometry.all(8.0),
+              child: FloatingActionButton(
+                mini: true,
+                onPressed: () {
+                  setState(() {
+                    _isDrawerOpen = !_isDrawerOpen;
+                    if (_isDrawerOpen) _isPinMode = false;
+                  });
+                },
+                child: Icon(_isDrawerOpen ? Icons.close : Icons.list),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
   }
 }
