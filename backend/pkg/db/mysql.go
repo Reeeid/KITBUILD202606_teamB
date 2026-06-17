@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// データベース接続の初期化関数
 func InitDB() {
 	loadEnv()
 
@@ -27,6 +28,7 @@ func InitDB() {
 	}
 }
 
+// .envファイルから環境変数を読み込む関数
 func loadEnv() {
 	err := godotenv.Load(".env")
 	if err != nil {
