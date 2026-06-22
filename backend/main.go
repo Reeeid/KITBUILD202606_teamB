@@ -1,16 +1,27 @@
 package main
 
 import (
+	"database/sql"
+
 	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/handlers"
 	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/internal/db"
 
 	"github.com/gin-gonic/gin"
 )
 
+func DatabaseMiddleware(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Set("db", db)
+		c.Next()
+	}
+}
+
 func main() {
-	r := gin.Default()
 	// データベース接続の初期化
-	db.InitDB()
+	database := db.InitDB()
+	defer database.Close() // 最後にデータベースを閉じる
+
+	r := gin.Default()
 
 	//店舗のCRUDエンドポイント
 	store := r.Group("/store")

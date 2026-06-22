@@ -11,14 +11,13 @@ import (
 )
 
 // データベース接続の初期化関数
-func InitDB() {
+func InitDB() *sql.DB {
 	loadEnv()
 
 	db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
@@ -26,6 +25,8 @@ func InitDB() {
 	} else {
 		log.Println("データベースに接続しました！")
 	}
+
+	return db
 }
 
 // .envファイルから環境変数を読み込む関数
