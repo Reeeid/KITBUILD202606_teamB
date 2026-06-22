@@ -2,12 +2,15 @@ package main
 
 import (
 	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/handlers"
+	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/internal/db"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
+	// データベース接続の初期化
+	db.InitDB()
 
 	//店舗のCRUDエンドポイント
 	store := r.Group("/store")
