@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:super_manager/pages/category_page.dart';
+import 'package:super_manager/model/item.dart';
 import 'package:super_manager/model/store.dart';
+import 'package:super_manager/pages/shopping/shopping_category_page.dart';
 
 class ShoppingScreen extends StatefulWidget {
   const ShoppingScreen({super.key});
@@ -9,26 +10,7 @@ class ShoppingScreen extends StatefulWidget {
   State<ShoppingScreen> createState() => _ShoppingScreenState();
 }
 
-class Item {
-  final String name;
-  final String description;
-  Item({required this.name, required this.description});
-}
-
 class _ShoppingScreenState extends State<ShoppingScreen> {
-  final List<Item> _items = [
-    Item(name: '牛乳', description: '1L'),
-    Item(name: 'パン', description: '食パン6枚切り'),
-    Item(name: '牛乳', description: '1L'),
-    Item(name: 'パン', description: '食パン6枚切り'),
-    Item(name: '牛乳', description: '1L'),
-    Item(name: 'パン', description: '食パン6枚切り'),
-    Item(name: '牛乳', description: '1L'),
-    Item(name: 'パン', description: '食パン6枚切り'),
-    Item(name: '牛乳', description: '1L'),
-    Item(name: 'パン', description: '食パン6枚切り'),
-  ];
-
   final Store _store = Store(
     name: 'スーパーA',
     kanaName: 'すーぱーえー',
@@ -38,6 +20,14 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
     longitude: 135.0,
     isCheap: true,
   );
+  final List<Item> _items = [
+    Item(
+      name: "とまと",
+      price: 1000,
+      description: "TOMATO",
+      storename: "サンディ和歌山店",
+    ),
+  ];
 
   final ScrollController _scrollController = ScrollController();
 
@@ -95,7 +85,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                               final item = await Navigator.push<Item>(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => CategoryPage(),
+                                  builder: (_) => ShoppingCategoryPage(),
                                 ),
                               );
                               if (item != null) {
