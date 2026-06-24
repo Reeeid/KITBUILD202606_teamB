@@ -28,7 +28,7 @@ func InitDB() *gorm.DB {
 
 // .envファイルから環境変数を読み込む関数
 func loadEnv() {
-	err := godotenv.Load(".env")
+	err := godotenv.Load("config/.env")
 	if err != nil {
 		log.Fatal(err)
 	}
