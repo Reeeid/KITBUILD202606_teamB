@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"log"
+	"os"
 
 	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/handlers"
 	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/internal/db"
@@ -19,7 +21,12 @@ func DatabaseMiddleware(db *sql.DB) gin.HandlerFunc {
 func main() {
 	// データベース接続の初期化
 	database := db.InitDB()
-	defer database.Close() // 最後にデータベースを閉じる
+	sqlDb, err := database.DB()
+	if err != nil {
+		log.Println("データベスの取得に失敗しました:", err)
+		os.Exit(0)
+	}
+	defer sqlDb.Close() // 最後にデータベースを閉じる
 
 	r := gin.Default()
 
