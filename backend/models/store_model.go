@@ -1,7 +1,7 @@
 package models
 
 type Store struct {
-	Id          uint
+	Id          string
 	Name        string
 	KanaName    string
 	Description string

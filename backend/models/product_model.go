@@ -1,6 +1,6 @@
 package models
 
 type Product struct {
-	Id   uint
+	Id   string
 	Name string
 }
