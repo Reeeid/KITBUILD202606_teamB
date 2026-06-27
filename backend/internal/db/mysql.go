@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -13,17 +14,21 @@ import (
 	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/models"
 )
 
+var DB *gorm.DB
+
 // データベース接続の初期化関数
-func InitDB() *gorm.DB {
+func InitDB() *sql.DB {
+	var err error
 	loadEnv()
 
-	db, err := gorm.Open(mysql.Open(os.Getenv("DATABASE_URL")), &gorm.Config{})
+	DB, err = gorm.Open(mysql.Open(os.Getenv("DATABASE_URL")), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("データベスの取得に失敗しました:", err)
 	}
 
-	db.AutoMigrate(&models.Category{}, &models.Product{}, &models.Store{})
-	return db
+	DB.AutoMigrate(&models.Category{}, &models.Product{}, &models.Store{})
+	sql, _ := DB.DB()
+	return sql
 }
 
 // .envファイルから環境変数を読み込む関数
