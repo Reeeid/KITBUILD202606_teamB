@@ -72,12 +72,12 @@ class StoreRepository {
   }
 
   //店舗更新
-  Future<void> updateStore(Store store) async {
+  Future<void> updateStore(Store store, int id) async {
     if (!_useApi) {
       return;
     }
     final res = await http.patch(
-      Uri.parse('$_baseUrl/stores'),
+      Uri.parse('$_baseUrl/stores/$id'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(store),
     );
