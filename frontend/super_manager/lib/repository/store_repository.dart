@@ -35,7 +35,7 @@ class StoreRepository {
         ),
       ];
     }
-    final res = await http.get(Uri.parse('$_baseUrl/store'));
+    final res = await http.get(Uri.parse('$_baseUrl/stores'));
     if (res.statusCode != 200) {
       throw Exception('エラー：${res.statusCode}');
     }
@@ -49,7 +49,7 @@ class StoreRepository {
       return;
     }
     final res = await http.post(
-      Uri.parse('$_baseUrl/store'),
+      Uri.parse('$_baseUrl/stores'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(store),
     );
@@ -64,7 +64,7 @@ class StoreRepository {
     if (_useApi) {
       return;
     }
-    final res = await http.delete(Uri.parse('$_baseUrl/store/$id'));
+    final res = await http.delete(Uri.parse('$_baseUrl/stores/$id'));
     if (res.statusCode != 200 && res.statusCode != 204) {
       throw Exception('エラー：${res.statusCode}');
     }
@@ -77,7 +77,7 @@ class StoreRepository {
       return;
     }
     final res = await http.patch(
-      Uri.parse('$_baseUrl/store'),
+      Uri.parse('$_baseUrl/stores'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(product),
     );
