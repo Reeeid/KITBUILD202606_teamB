@@ -9,8 +9,7 @@ import (
 
 // 店舗一覧表示
 func GetStoreList(c *gin.Context) {
-	var Store models.Store
-	utils.CreateItem(c, Store)
+
 }
 
 // 店舗個別表示
@@ -20,7 +19,8 @@ func GetStore(c *gin.Context) {
 
 // 店舗新規作成
 func CreateStore(c *gin.Context) {
-
+	var Store models.Store
+	utils.CreateItem(c, Store)
 }
 
 // 店舗情報更新
