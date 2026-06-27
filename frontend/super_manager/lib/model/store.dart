@@ -1,4 +1,5 @@
 class Store {
+  final int id;
   final String name;
   final String kanaName;
   final String location;
@@ -8,6 +9,7 @@ class Store {
   final bool isCheap;
 
   Store({
+    required this.id,
     required this.name,
     required this.kanaName,
     required this.location,

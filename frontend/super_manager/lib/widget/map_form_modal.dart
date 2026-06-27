@@ -95,6 +95,7 @@ class _MapFormModalState extends State<MapFormModal> {
                 Navigator.pop(
                   context,
                   Store(
+                    id: 1,
                     name: _controllers['name']!.text,
                     kanaName: _controllers['kananame']!.text,
                     location: _controllers['location']!.text,

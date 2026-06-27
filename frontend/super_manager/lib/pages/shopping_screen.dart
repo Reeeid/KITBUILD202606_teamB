@@ -13,6 +13,7 @@ class ShoppingScreen extends StatefulWidget {
 
 class _ShoppingScreenState extends State<ShoppingScreen> {
   final Store _store = Store(
+    id: 1,
     name: 'スーパーA',
     kanaName: 'すーぱーえー',
     location: 'ACT314',

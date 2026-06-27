@@ -1,26 +1,26 @@
 //商品IDで取ってきた店のリストと値段を取るための型
 class StoreProduct {
-  final int storeId;
+  final int id;
   final String storeName;
+  final String productName;
   final String location;
-  final int productId;
   final int price;
   final int weight;
   StoreProduct({
-    required this.storeId,
+    required this.id,
     required this.storeName,
+    required this.productName,
     required this.location,
-    required this.productId,
     required this.price,
     required this.weight,
   });
 
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
     return StoreProduct(
-      storeId: json['store_id'],
+      id: json['id'],
       storeName: json['store_mame'],
       location: json['location'],
-      productId: json['product_id'],
+      productName: json['product_name'],
       price: json['price'],
       weight: json['weight'],
     );
@@ -28,10 +28,10 @@ class StoreProduct {
 
   Map<String, dynamic> toJson() {
     return {
-      'store_id': storeId,
+      'id': id,
       'store_name': storeName,
+      'product_name': productName,
       'location': location,
-      'product_id': productId,
       'price': price,
       'weight': weight,
     };
