@@ -61,7 +61,7 @@ class StoreRepository {
 
   //店舗削除
   Future<void> deleteStoreProduct(int id) async {
-    if (_useApi) {
+    if (!_useApi) {
       return;
     }
     final res = await http.delete(Uri.parse('$_baseUrl/stores/$id'));
@@ -73,7 +73,7 @@ class StoreRepository {
 
   //店舗更新
   Future<void> updateStoreProduct(StoreProduct product) async {
-    if (_useApi) {
+    if (!_useApi) {
       return;
     }
     final res = await http.patch(

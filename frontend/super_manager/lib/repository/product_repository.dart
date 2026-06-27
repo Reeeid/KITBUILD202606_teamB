@@ -64,7 +64,7 @@ class ProductRepository {
 
   //商品詳細作成
   Future<void> createStoreProduct(StoreProduct product) async {
-    if (_useApi) {
+    if (!_useApi) {
       return;
     }
     final res = await http.post(
@@ -80,7 +80,7 @@ class ProductRepository {
 
   //商品詳細削除
   Future<void> deleteStoreProduct(int id) async {
-    if (_useApi) {
+    if (!_useApi) {
       return;
     }
     final res = await http.delete(Uri.parse('$_baseUrl/products/$id'));
@@ -92,7 +92,7 @@ class ProductRepository {
 
   //商品詳細更新
   Future<void> updateStoreProduct(StoreProduct product, int id) async {
-    if (_useApi) {
+    if (!_useApi) {
       return;
     }
     final res = await http.patch(
