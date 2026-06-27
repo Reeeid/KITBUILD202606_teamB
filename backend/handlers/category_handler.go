@@ -6,9 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/internal/db"
+	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/internal/db"	
+	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/internal/response"
 	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/models"
-	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/utils"
 )
 
 var category models.Category
@@ -18,7 +18,7 @@ var categoryList []models.Category
 func GetCategoryList(r *gin.Context) {
 	result := db.DB.Find(&categoryList)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "failed to fetch category list", result.Error)
+		response.ErrorResponse(r, 500, "failed to fetch category list", result.Error)
 		return
 	}
 	r.JSON(http.StatusOK, &categoryList)
@@ -32,7 +32,7 @@ func GetCategory(r *gin.Context) {
 
 	result := db.DB.First(&category, id)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "failed to fetch category", result.Error)
+		response.ErrorResponse(r, 500, "failed to fetch category", result.Error)
 		return
 	}
 	r.JSON(http.StatusOK, &category)
@@ -43,7 +43,7 @@ func GetCategory(r *gin.Context) {
 // カテゴリ新規作成
 func CreateCategory(r *gin.Context) {
 	if err := r.ShouldBindJSON(&category); err != nil {
-		utils.ErrorResponse(r, 400, "invalid request category data", err)
+		response.ErrorResponse(r, 400, "invalid request category data", err)
 		return
 	}
 
@@ -51,7 +51,7 @@ func CreateCategory(r *gin.Context) {
 	fmt.Println("受け取ったJSONファイル：", category)
 	result := db.DB.Create(&category)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "invalid update category data", result.Error)
+		response.ErrorResponse(r, 500, "invalid update category data", result.Error)
 		return
 	}
 	fmt.Println("カテゴリーが正常に登録されました：", result.RowsAffected)
@@ -60,7 +60,7 @@ func CreateCategory(r *gin.Context) {
 // カテゴリ情報更新
 func UpdateCategory(r *gin.Context) {
 	if err := r.ShouldBindJSON(&category); err != nil {
-		utils.ErrorResponse(r, 400, "invalid request category data", err)
+		response.ErrorResponse(r, 400, "invalid request category data", err)
 		return
 	}
 
@@ -68,7 +68,7 @@ func UpdateCategory(r *gin.Context) {
 
 	result := db.DB.Where("id = ?", id).Save(&category)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "invalid update category data", result.Error)
+		response.ErrorResponse(r, 500, "invalid update category data", result.Error)
 		return
 	}
 	fmt.Println("カテゴリーが正常に更新されました：", result.RowsAffected)
@@ -80,7 +80,7 @@ func DeleteCategory(r *gin.Context) {
 
 	result := db.DB.Where("id = ?", id).Delete(&category)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "invalid delete category data", result.Error)
+		response.ErrorResponse(r, 500, "invalid delete category data", result.Error)
 		return
 	}
 	fmt.Println("カテゴリーが正常に削除されました：", result.RowsAffected)
