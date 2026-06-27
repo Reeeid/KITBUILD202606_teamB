@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/internal/db"
+	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/internal/response"
 	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/models"
-	"github.com/tadanobutaaaaa/KITBUILD202606_teamB/utils"
 )
 
 var product models.Product
@@ -18,7 +18,7 @@ var productList []models.Product
 func GetProductList(r *gin.Context) {
 	result := db.DB.Find(&productList)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "failed to fetch product list", result.Error)
+		response.ErrorResponse(r, 500, "failed to fetch product list", result.Error)
 		return
 	}
 	r.JSON(http.StatusOK, &productList)
@@ -32,7 +32,7 @@ func GetProduct(r *gin.Context) {
 
 	result := db.DB.Where("id = ?", id).First(&product)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "failed to fetch category", result.Error)
+		response.ErrorResponse(r, 500, "failed to fetch product", result.Error)
 		return
 	}
 	r.JSON(http.StatusOK, &product)
@@ -43,7 +43,7 @@ func GetProduct(r *gin.Context) {
 // 商品新規作成
 func CreateProduct(r *gin.Context) {
 	if err := r.ShouldBindJSON(&product); err != nil {
-		utils.ErrorResponse(r, 400, "invalid request category data", err)
+		response.ErrorResponse(r, 400, "invalid request product data", err)
 		return
 	}
 	//受け取ったJSONファイルの出力
@@ -51,7 +51,7 @@ func CreateProduct(r *gin.Context) {
 
 	result := db.DB.Create(&product)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "invalid create category data", result.Error)
+		response.ErrorResponse(r, 500, "invalid create product data", result.Error)
 		return
 	}
 	fmt.Println("プロダクトが正常に登録されました：", result.RowsAffected)
@@ -60,18 +60,18 @@ func CreateProduct(r *gin.Context) {
 // 商品情報更新
 func UpdateProduct(r *gin.Context) {
 	if err := r.ShouldBindJSON(&product); err != nil {
-		utils.ErrorResponse(r, 400, "invalid request category data", err)
+		response.ErrorResponse(r, 400, "invalid request product data", err)
 		return
 	}
 
 	id := r.Param("id")
 
-	result := db.DB.Where("id = ?", id).Save(&store)
+	result := db.DB.Where("id = ?", id).Save(&product)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "invalid update store data", result.Error)
+		response.ErrorResponse(r, 500, "invalid update product data", result.Error)
 		return
 	}
-	fmt.Println("店舗が正常に更新されました：", result.RowsAffected)
+	fmt.Println("プロダクトが正常に更新されました：", result.RowsAffected)
 }
 
 // 商品削除
@@ -80,7 +80,7 @@ func DeleteProduct(r *gin.Context) {
 
 	result := db.DB.Where("id = ?", id).Delete(&product)
 	if result.Error != nil {
-		utils.ErrorResponse(r, 500, "invalid delete category data", result.Error)
+		response.ErrorResponse(r, 500, "invalid delete product data", result.Error)
 		return
 	}
 	fmt.Println("プロダクトが正常に削除されました：", result.RowsAffected)
