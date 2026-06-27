@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:super_manager/pages/product_list_page.dart';
+import 'package:super_manager/pages/product_list_page.dart'; 
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 検索窓に入力された文字を管理
+    final searchController = TextEditingController();
+
     return Scaffold(
       body: Row(
         children: [
@@ -21,11 +24,22 @@ class CategoryPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: TextField(
+                          controller: searchController, // コントローラーをセット
                           decoration: InputDecoration(
                             hintText: 'キーワードを入力',
-                            suffixIcon: const Icon(Icons.search),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.search),
+                              onPressed: () {
+                                // 虫眼鏡アイコンをクリックしたときも検索を実行
+                                _onSearch(context, searchController.text);
+                              },
+                            ),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
                           ),
+                          // キーボードの「検索」や「エンター」が押されたときの処理
+                          onSubmitted: (value) {
+                            _onSearch(context, value);
+                          },
                         ),
                       ),
                       const SizedBox(width: 40), // 右側の余白
@@ -75,15 +89,28 @@ class CategoryPage extends StatelessWidget {
     );
   }
 
-  // カテゴリボタン(使い回し用)
+  // 検索を実行
+  void _onSearch(BuildContext context, String query) {
+    // もし何も入力されていなければ何もしない
+    if (query.trim().isEmpty) return;
+
+    // 入力された商品の名前（例: キャベツ）の金額比較ページに移動
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProductDetailPage(productName: query.trim()),
+      ),
+    );
+  }
+
+  // カテゴリボタン
   Widget _buildCategoryButton(BuildContext context, String label) { 
     return GestureDetector(
       onTap: () {
-        if (label == '野菜') { // もし押されたボタンが「野菜」なら
-          Navigator.of(context).push( // 画面移動
-            MaterialPageRoute(builder: (context) => const ProductListPage()),
-          );
-        }
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ProductListPage(categoryName: label),
+          ),
+        );
       },
       child: Container( 
         decoration: BoxDecoration(
