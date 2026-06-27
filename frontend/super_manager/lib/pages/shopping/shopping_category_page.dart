@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:super_manager/model/product.dart';
 import 'package:super_manager/pages/shopping/shopping_product_list_page.dart';
-import 'package:super_manager/model/item.dart';
 
 class ShoppingCategoryPage extends StatelessWidget {
   const ShoppingCategoryPage({super.key});
@@ -99,7 +99,7 @@ class ShoppingCategoryPage extends StatelessWidget {
   Widget _buildCategoryButton(BuildContext context, String label) {
     return GestureDetector(
       onTap: () async {
-        final item = await Navigator.push<Item>(
+        final item = await Navigator.push<Product>(
           context,
           MaterialPageRoute(builder: (_) => const ShoppingProductListPage()),
         );

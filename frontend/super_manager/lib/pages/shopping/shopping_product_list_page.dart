@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:super_manager/model/item.dart';
 
 class ShoppingProductListPage extends StatelessWidget {
   const ShoppingProductListPage({super.key});
@@ -62,15 +61,7 @@ class ShoppingProductListPage extends StatelessWidget {
   Widget _buildProductCard(BuildContext context, String name, String price) {
     return GestureDetector(
       onTap: () {
-        Navigator.pop(
-          context,
-          Item(
-            name: "tomato",
-            price: 10000,
-            description: "tomato",
-            storename: "サンディ和歌山店",
-          ),
-        );
+        Navigator.pop(context);
       },
       child: Container(
         decoration: BoxDecoration(
