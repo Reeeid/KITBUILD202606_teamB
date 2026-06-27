@@ -80,6 +80,7 @@ class ProductRepository {
     return;
   }
 
+  //Delete
   Future<void> deleteProduct(int id) async {
     if (_useApi) {
       return;
@@ -91,11 +92,16 @@ class ProductRepository {
     return;
   }
 
-  Future<void> updateProduct(int id) async {
+  //Update
+  Future<void> updateProduct(Product product) async {
     if (_useApi) {
       return;
     }
-    final res = await http.patch(Uri.parse('$_baseUrl/products/$id'));
+    final res = await http.patch(
+      Uri.parse('$_baseUrl/products'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(product),
+    );
     if (res.statusCode != 200 && res.statusCode != 204) {
       throw Exception('エラー：${res.statusCode}');
     }
