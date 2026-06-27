@@ -72,14 +72,14 @@ class StoreRepository {
   }
 
   //店舗更新
-  Future<void> updateStore(StoreProduct product) async {
+  Future<void> updateStore(Store store) async {
     if (!_useApi) {
       return;
     }
     final res = await http.patch(
       Uri.parse('$_baseUrl/stores'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(product),
+      body: jsonEncode(store),
     );
     if (res.statusCode != 200 && res.statusCode != 204) {
       throw Exception('エラー：${res.statusCode}');
