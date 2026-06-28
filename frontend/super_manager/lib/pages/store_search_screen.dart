@@ -16,7 +16,7 @@ final class _StoreSearchScreenState extends State<StoreSearchScreen> {
   final _storerepo = StoreRepository();
   bool _isDrawerOpen = false;
   // モックストア(検索用)
-  List<Store> _allStores = [];
+  final List<Store> _allStores = [];
   List<Store> _displayedStores = [];
   final TextEditingController _searchController = TextEditingController();
 
@@ -24,6 +24,7 @@ final class _StoreSearchScreenState extends State<StoreSearchScreen> {
     final stores = await _storerepo.fetchStores();
     if (!mounted) return;
     setState(() {
+      _allStores.clear(); //2重追加阻止
       _allStores.addAll(stores);
       _displayedStores = List.from(_allStores);
     });
