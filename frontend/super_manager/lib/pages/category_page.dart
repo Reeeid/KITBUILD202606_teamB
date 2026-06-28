@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:super_manager/pages/product_list_page.dart'; 
 
-class CategoryPage extends StatelessWidget {
+// ★ 正しい StatefulWidget の形に修正
+class CategoryPage extends StatefulWidget {
   const CategoryPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // 検索窓に入力された文字を管理
-    final searchController = TextEditingController();
+  State<CategoryPage> createState() => _CategoryPageState();
+}
 
+class _CategoryPageState extends State<CategoryPage> {
+  // 検索窓に入力された文字を管理
+  final searchController = TextEditingController();
+
+  //現在のカテゴリ一覧（状態）を保存
+  final List<String> _categories = ['野菜', '果物', '肉', '魚', '乳製品', '調味料'];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Row(
         children: [
-          // 右側のメインコンテンツエリア
+          // 右側
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
@@ -24,25 +33,23 @@ class CategoryPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: TextField(
-                          controller: searchController, // コントローラーをセット
+                          controller: searchController,
                           decoration: InputDecoration(
                             hintText: 'キーワードを入力',
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.search),
                               onPressed: () {
-                                // 虫眼鏡アイコンをクリックしたときも検索を実行
                                 _onSearch(context, searchController.text);
                               },
                             ),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
                           ),
-                          // キーボードの「検索」や「エンター」が押されたときの処理
                           onSubmitted: (value) {
                             _onSearch(context, value);
                           },
                         ),
                       ),
-                      const SizedBox(width: 40), // 右側の余白
+                      const SizedBox(width: 40),
                     ],
                   ),
                   const SizedBox(height: 30),
@@ -65,19 +72,18 @@ class CategoryPage extends StatelessWidget {
 
                   //カテゴリボタンの配置
                   Expanded(
-                    child: GridView.count(
-                      crossAxisCount: 3,       // 3列に並べる
-                      mainAxisSpacing: 20,     // 縦のすきま
-                      crossAxisSpacing: 20,    // 横のすきま
-                      childAspectRatio: 1.2,   // ボタンの縦横比
-                      children: [
-                        _buildCategoryButton(context, '野菜'),
-                        _buildCategoryButton(context, '果物'),
-                        _buildCategoryButton(context, '肉'),
-                        _buildCategoryButton(context, '魚'),
-                        _buildCategoryButton(context, '乳製品'),
-                        _buildCategoryButton(context, '調味料'),
-                      ],
+                    // リストの中身が増えたら自動でボタンが増える
+                    child: GridView.builder(
+                      itemCount: _categories.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,       // 3列に並べる
+                        mainAxisSpacing: 20,     // 縦のすきま
+                        crossAxisSpacing: 20,    // 横のすきま
+                        childAspectRatio: 1.2,   // ボタンの縦横比
+                      ),
+                      itemBuilder: (context, index) {
+                        return _buildCategoryButton(context, _categories[index]);
+                      },
                     ),
                   ),
                 ],
@@ -86,19 +92,101 @@ class CategoryPage extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showAddProductDialog(context);
+        },
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Colors.black26, width: 1),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: const Icon(Icons.add, size: 28),
+      ),
     );
   }
 
   // 検索を実行
   void _onSearch(BuildContext context, String query) {
-    // もし何も入力されていなければ何もしない
     if (query.trim().isEmpty) return;
 
-    // 入力された商品の名前（例: キャベツ）の金額比較ページに移動
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ProductDetailPage(productName: query.trim()),
+        builder: (context) => ProductDetailPage(productName: query.trim(), priceList: []),
       ),
+    );
+  }
+
+  void _showAddProductDialog(BuildContext context) {
+    final nameController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          titlePadding: EdgeInsets.zero,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+          title: Container(
+            height: 40,
+            color: Colors.lightGreen,
+          ),
+          content: SizedBox(
+            width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 20),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: '商品名',
+                    hintText: '例: 野菜',
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.zero,
+                      borderSide: BorderSide(color: Colors.lightGreen, width: 2.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.zero,
+                      borderSide: BorderSide(color: Colors.lightGreen, width: 2.0),
+                    ),
+                  ),
+                  autofocus: true,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('キャンセル', style: TextStyle(color: Colors.black54)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final productName = nameController.text.trim();
+                if (productName.isEmpty) return;
+
+                //リストにデータを保存して、画面を更新
+                setState(() {
+                  _categories.add(productName);
+                });
+
+                Navigator.pop(dialogContext);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.lightGreen,
+                foregroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
+              ),
+              child: const Text('追加'),
+            ),
+          ],
+        );
+      },
     );
   }
 
