@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:super_manager/model/store.dart';
 import 'package:super_manager/components/map_form_modal.dart';
+import 'package:super_manager/repository/store_repository.dart';
 
 class StoreSearchScreen extends StatefulWidget {
   const StoreSearchScreen({super.key});
@@ -12,12 +13,22 @@ class StoreSearchScreen extends StatefulWidget {
 }
 
 final class _StoreSearchScreenState extends State<StoreSearchScreen> {
+  final _storerepo = StoreRepository();
   bool _isDrawerOpen = false;
   // モックストア(検索用)
   final List<Store> _allStores = [];
 
   List<Store> _displayedStores = [];
   final TextEditingController _searchController = TextEditingController();
+
+  Future<void> _loadStores() async {
+    final stores = await _storerepo.fetchStores();
+    if (!mounted) return;
+    setState(() {
+      _allStores.addAll(stores);
+      _displayedStores = List.from(_allStores);
+    });
+  }
 
   void _searchStores(String query) {
     if (query.isEmpty) {
@@ -72,6 +83,7 @@ final class _StoreSearchScreenState extends State<StoreSearchScreen> {
     if (store == null) {
       return;
     }
+    await _storerepo.createStore(store);
 
     final marker = Marker(
       markerId: MarkerId(latLng.toString()),
@@ -81,13 +93,13 @@ final class _StoreSearchScreenState extends State<StoreSearchScreen> {
     setState(() {
       _markers = {..._markers, marker};
       _allStores.add(store);
-      _displayedStores = List.from(_allStores);
     });
   }
 
   @override
   void initState() {
     super.initState();
+    _loadStores();
     _displayedStores = List.from(_allStores);
   }
 

@@ -64,6 +64,12 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                                     child: ListTile(
                                       leading: Icon(Icons.shopping_bag),
                                       title: Text(_items[index].name),
+                                      trailing: IconButton(
+                                        onPressed: () => setState(
+                                          () => _items.removeAt(index),
+                                        ),
+                                        icon: Icon(Icons.delete),
+                                      ),
                                     ),
                                   );
                                 },
