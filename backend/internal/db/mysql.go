@@ -33,7 +33,7 @@ func InitDB() *sql.DB {
 
 // .envファイルから環境変数を読み込む関数
 func loadEnv() {
-	err := godotenv.Load("config/.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal(err)
 	}
